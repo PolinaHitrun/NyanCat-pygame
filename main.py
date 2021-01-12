@@ -1,9 +1,9 @@
-import pygame # 123
+import pygame
 import os
 import sys
 import random
 
-FPS = 50
+FPS = 120
 WIDTH = 600
 HEIGHT = 600
 
@@ -46,23 +46,23 @@ def start_screen():
             if event.type == pygame.QUIT:
                 terminate()
             elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-                return  # начинаем игру
+                return
         pygame.display.flip()
         clock.tick(FPS)
 
 
-class Camera:
-    # зададим начальный сдвиг камеры
-    def __init__(self):
-        self.dx = 0
-
-    # сдвинуть объект obj на смещение камеры
-    def apply(self, obj):
-        obj.rect.x += self.dx
-
-    # позиционировать камеру на объекте target
-    def update(self, target):
-        self.dx = -(target.rect.x + target.rect.w // 2 - WIDTH // 2)
+# class Camera:
+#     # зададим начальный сдвиг камеры
+#     def __init__(self):
+#         self.dx = 0
+#
+#     # сдвинуть объект obj на смещение камеры
+#     def apply(self, obj):
+#         obj.rect.x += self.dx
+#
+#     # позиционировать камеру на объекте target
+#     def update(self, target):
+#         self.dx = -(target.rect.x + target.rect.w // 2 - WIDTH // 2)
 
 
 class NyanCat(pygame.sprite.Sprite):
@@ -84,16 +84,26 @@ class NyanCat(pygame.sprite.Sprite):
 class Blocks(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
         super().__init__(blocks_group, all_sprites)
+        width = random.randint(50, 150)
+        self.image = pygame.Surface((width, 20))
         self.rect = self.image.get_rect().move(pos_x, pos_y)
+        pygame.draw.rect(screen, pygame.Color("red"), (pos_x, pos_y, width, 20))
+
+
+    def update(self):
+        self.rect = self.rect.move(-1, 0)
+        print(self.rect)
 
 
 class Food(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
         super().__init__(blocks_group, all_sprites)
 
-    def update(self):
+    def move(self):
         pass
 
+    def update(self):
+        pass
 
 
 if __name__ == '__main__':
@@ -103,17 +113,21 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
     start_screen()
+    screen.fill('blue')
 
     all_sprites = pygame.sprite.Group()
     blocks_group = pygame.sprite.Group()
     player_group = pygame.sprite.Group()
 
+    block = Blocks(WIDTH, HEIGHT // 2)
+
     running = True
     while running:
         screen.fill('blue')
-        # block = Blocks(WIDTH, random.randint(0, HEIGHT))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
+        blocks_group.update()
+        blocks_group.draw(screen)
+        pygame.display.flip()
         clock.tick(FPS)

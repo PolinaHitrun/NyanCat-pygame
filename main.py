@@ -1,6 +1,7 @@
 import pygame
 import os
 import sys
+import random
 
 FPS = 50
 WIDTH = 600
@@ -40,9 +41,7 @@ def start_screen():
         text_coord += intro_rect.height
         screen.blit(string_rendered, intro_rect)
 
-    count = 0
-    while count <= 10:
-        count += 1
+    while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
@@ -74,7 +73,7 @@ class NyanCat(pygame.sprite.Sprite):
         self.cut_sheet(sheet, columns, rows)
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
-        self.rect = self.rect.move(x, y)
+        self.rect = self.rect.move(pos_x, pos_y)
 
     def update(self):
         pass
@@ -84,12 +83,13 @@ class NyanCat(pygame.sprite.Sprite):
 
 
 class Blocks(pygame.sprite.Sprite):
-    def __init__(self, pos_x, pos_):
+    def __init__(self, pos_x, pos_y):
         super().__init__(blocks_group, all_sprites)
+        self.rect = self.image.get_rect().move(pos_x, pos_y)
 
 
 class Food(pygame.sprite.Sprite):
-    def __init__(self, pos_x, pos_):
+    def __init__(self, pos_x, pos_y):
         super().__init__(blocks_group, all_sprites)
 
     def update(self):
@@ -105,8 +105,15 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
     start_screen()
 
+    all_sprites = pygame.sprite.Group()
+    blocks_group = pygame.sprite.Group()
+    player_group = pygame.sprite.Group()
+
     running = True
     while running:
+        block = Blocks(WIDTH, random.randint(0, HEIGHT))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
+        clock.tick(FPS)

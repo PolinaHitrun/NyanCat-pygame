@@ -95,15 +95,22 @@ class Blocks(pygame.sprite.Sprite):
 
 
 class Food(pygame.sprite.Sprite):
+    images = ['eggs.png', 'fastfood.png', 'taco.png']
 
     def __init__(self, pos_x, pos_y):
-        super().__init__(blocks_group, all_sprites)
+        super().__init__(food_group, all_sprites)
+        self.image = load_image(random.choice(Food.images))
+        self.image = pygame.transform.scale(self.image, (30, 30))
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect.x = pos_x
+        self.rect.y = pos_y
 
     def move(self):
         pass
 
     def update(self):
-        pass
+        self.rect = self.rect.move(-2, 0)
 
 
 if __name__ == '__main__':
@@ -117,6 +124,7 @@ if __name__ == '__main__':
     screen.blit(fon, (0, 0))
 
     all_sprites = pygame.sprite.Group()
+    food_group = pygame.sprite.Group()
     blocks_group = pygame.sprite.Group()
     player_group = pygame.sprite.Group()
 
@@ -129,10 +137,12 @@ if __name__ == '__main__':
         if counter > 30:
             counter = 0
             block = Blocks(WIDTH, random.randint(0, HEIGHT))
+            food = Food(WIDTH, random.randint(0, HEIGHT))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
         blocks_group.update()
-        blocks_group.draw(screen)
+        food_group.update()
+        all_sprites.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)

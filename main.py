@@ -4,8 +4,8 @@ import sys
 import random
 
 FPS = 120
-WIDTH = 600
-HEIGHT = 600
+WIDTH = 700
+HEIGHT = 700
 
 
 def load_image(name, colorkey=None):
@@ -91,11 +91,11 @@ class Blocks(pygame.sprite.Sprite):
 
 
     def update(self):
-        self.rect = self.rect.move(-1, 0)
-        print(self.rect)
+        self.rect = self.rect.move(-2, 0)
 
 
 class Food(pygame.sprite.Sprite):
+
     def __init__(self, pos_x, pos_y):
         super().__init__(blocks_group, all_sprites)
 
@@ -113,17 +113,22 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
     start_screen()
-    screen.fill('blue')
+    fon = pygame.transform.scale(load_image('fon_game.jpg'), (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))
 
     all_sprites = pygame.sprite.Group()
     blocks_group = pygame.sprite.Group()
     player_group = pygame.sprite.Group()
 
-    block = Blocks(WIDTH, HEIGHT // 2)
-
+    counter = 0
     running = True
     while running:
-        screen.fill('blue')
+        counter += 1
+        fon = pygame.transform.scale(load_image('fon_game.jpg'), (WIDTH, HEIGHT))
+        screen.blit(fon, (0, 0))
+        if counter > 30:
+            counter = 0
+            block = Blocks(WIDTH, random.randint(0, HEIGHT))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False

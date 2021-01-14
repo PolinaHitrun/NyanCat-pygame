@@ -113,6 +113,33 @@ class Food(pygame.sprite.Sprite):
         self.rect = self.rect.move(-2, 0)
 
 
+class NyanCat(pygame.sprite.Sprite):
+    def __init__(self, sheet, columns, rows, x, y):
+        super().__init__(all_sprites)
+        self.frames = []
+        self.cut_sheet(sheet, columns, rows)
+        self.cur_frame = 0
+        self.image = self.frames[self.cur_frame]
+        self.rect = self.rect.move(x, y)
+        self.num = 0
+
+    def cut_sheet(self, sheet, columns, rows):
+        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
+                                sheet.get_height() // rows)
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (self.rect.w * i, self.rect.h * j)
+                self.frames.append(sheet.subsurface(pygame.Rect(
+                    frame_location, self.rect.size)))
+
+    def update(self):
+        self.num += 1
+        if self.num == FPS // 20:
+            self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+            self.num = 0
+            self.image = self.frames[self.cur_frame]
+
+
 if __name__ == '__main__':
     pygame.init()
     pygame.display.set_caption('Nyan Cat')
@@ -127,6 +154,8 @@ if __name__ == '__main__':
     food_group = pygame.sprite.Group()
     blocks_group = pygame.sprite.Group()
     player_group = pygame.sprite.Group()
+
+    cat = NyanCat(load_image("nyan cat.png") , 3 , 3 , 100 , 100)
 
     counter = 0
     running = True
@@ -144,5 +173,6 @@ if __name__ == '__main__':
         blocks_group.update()
         food_group.update()
         all_sprites.draw(screen)
+        all_sprites.update()
         pygame.display.flip()
         clock.tick(FPS)

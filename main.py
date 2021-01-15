@@ -3,7 +3,7 @@ import os
 import sys
 import random
 
-FPS = 120
+FPS = 180
 WIDTH = 700
 HEIGHT = 700
 
@@ -64,23 +64,6 @@ def start_screen():
 #     def update(self, target):
 #         self.dx = -(target.rect.x + target.rect.w // 2 - WIDTH // 2)
 
-
-class NyanCat(pygame.sprite.Sprite):
-    def __init__(self, pos_x, pos_y):
-        super().__init__(player_group, all_sprites)
-        self.frames = []
-        self.cut_sheet(sheet, columns, rows)
-        self.cur_frame = 0
-        self.image = self.frames[self.cur_frame]
-        self.rect = self.rect.move(pos_x, pos_y)
-
-    def update(self):
-        pass
-
-    def cut_sheet(self):
-        pass
-
-
 class Blocks(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
         super().__init__(blocks_group, all_sprites)
@@ -115,13 +98,15 @@ class Food(pygame.sprite.Sprite):
 
 class NyanCat(pygame.sprite.Sprite):
     def __init__(self, sheet, columns, rows, x, y):
-        super().__init__(all_sprites)
+        super().__init__(player_group, all_sprites)
         self.frames = []
         self.cut_sheet(sheet, columns, rows)
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
         self.rect = self.rect.move(x, y)
         self.num = 0
+        self.jump_counter = 0
+        self.score = 0
 
     def cut_sheet(self, sheet, columns, rows):
         self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
@@ -138,6 +123,35 @@ class NyanCat(pygame.sprite.Sprite):
             self.cur_frame = (self.cur_frame + 1) % len(self.frames)
             self.num = 0
             self.image = self.frames[self.cur_frame]
+        # self.rect = self.rect.move(0, 3)
+        if pygame.sprite.spritecollideany(self, blocks_group):
+            for block in blocks_group:
+                group = pygame.sprite.Group()
+                group.add(block)
+                if pygame.sprite.spritecollideany(self, group):
+                    # если прыгает на платформу
+                    if block.rect.x <= self.rect.x + self.rect.width <= block.rect.x + block.rect.width\
+                            and block.rect.y >= self.rect.y + self.rect.height:
+                        pass
+                    else:
+                        pass
+                    # это делаем булевой переменной, а потом при движении проверяем ее
+
+
+
+class Bomb(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y):
+        super().__init__(food_group, all_sprites)
+        self.image = load_image('bomb.png')
+        self.image = pygame.transform.scale(self.image, (30, 30))
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect.x = pos_x
+        self.rect.y = pos_y
+
+    def update(self):
+        self.rect = self.rect.move(-2, 0)
+
 
 
 if __name__ == '__main__':
@@ -163,10 +177,11 @@ if __name__ == '__main__':
         counter += 1
         fon = pygame.transform.scale(load_image('fon_game.jpg'), (WIDTH, HEIGHT))
         screen.blit(fon, (0, 0))
-        if counter > 30:
+        if counter > 20:
             counter = 0
             block = Blocks(WIDTH, random.randint(0, HEIGHT))
             food = Food(WIDTH, random.randint(0, HEIGHT))
+            bomb = Bomb(WIDTH, random.randint(0, HEIGHT))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False

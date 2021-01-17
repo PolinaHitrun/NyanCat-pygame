@@ -67,6 +67,8 @@ class Blocks(pygame.sprite.Sprite):
 
     def update(self):
         self.rect = self.rect.move(-2, 0)
+        if self.rect.x + self.rect.width < 0:
+            self.kill()
 
 
 class Food(pygame.sprite.Sprite):
@@ -81,14 +83,13 @@ class Food(pygame.sprite.Sprite):
         self.rect.x = pos_x
         self.rect.y = pos_y
 
-    def move(self):
-        pass
-
     def update(self):
         global score
         self.rect = self.rect.move(-2, 0)
         if pygame.sprite.spritecollideany(self, player_group):
             score += 1
+            self.kill()
+        if self.rect.x + self.rect.width < 0:
             self.kill()
 
 
@@ -153,6 +154,11 @@ class Bomb(pygame.sprite.Sprite):
 
     def update(self):
         self.rect = self.rect.move(-2, 0)
+        if self.rect.x + self.rect.width < 0:
+            self.kill()
+        if pygame.sprite.spritecollideany(self, player_group):
+            cat.kill()
+            game_over()
 
 
 # class Invisible(pygame.sprite.Sprite):

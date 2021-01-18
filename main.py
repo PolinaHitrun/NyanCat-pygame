@@ -11,7 +11,7 @@ score = 0
 
 
 def game_over():
-    pass
+    print(1)
 
 
 def load_image(name, colorkey=None):

@@ -11,7 +11,32 @@ score = 0
 
 
 def game_over():
-    print(1)
+    global score
+    intro_text = [f"Твой счёт: {score}", "Нажми, чтобы начать заново"]
+
+    fon = pygame.transform.scale(load_image('game_over.jpg'), (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 30)
+    text_coord = 50
+    for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color(247, 211, 162))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 10
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+
+    score = 0
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                return NyanCat(pic, 3, 3, 30, 100)
+        pygame.display.flip()
+        clock.tick(FPS)
 
 
 def load_image(name, colorkey=None):
@@ -157,7 +182,7 @@ class Bomb(pygame.sprite.Sprite):
             self.kill()
         if pygame.sprite.spritecollideany(self, player_group):
             cat.kill()
-            game_over()
+            # game_over()
 
     def delete(self, event):
         if event and event.type == pygame.MOUSEBUTTONDOWN and \
@@ -234,5 +259,7 @@ if __name__ == '__main__':
 
         all_sprites.draw(screen)
         all_sprites.update()
+        if not cat.alive():
+            cat = game_over()
         pygame.display.flip()
         clock.tick(FPS)

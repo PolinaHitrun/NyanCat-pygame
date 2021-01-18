@@ -104,6 +104,7 @@ class NyanCat(pygame.sprite.Sprite):
         self.num = 0
         self.jump_counter = 0
         self.jumping = False
+        self.standing = False
 
     def cut_sheet(self, sheet, columns, rows):
         self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
@@ -121,27 +122,30 @@ class NyanCat(pygame.sprite.Sprite):
             self.num = 0
             self.image = self.frames[self.cur_frame]
 
-        # self.rect = self.rect.move(0, 3)
-
         if pygame.sprite.spritecollideany(self, blocks_group):
             for block in blocks_group:
                 group = pygame.sprite.Group()
                 group.add(block)
                 if pygame.sprite.spritecollideany(self, group):
                     # если прыгает на платформу
-                    if block.rect.x <= self.rect.x + self.rect.width <= block.rect.x + block.rect.width\
-                            and block.rect.y >= self.rect.y + self.rect.height:
+                    print(block.rect.x, block.rect.y, block.rect.width, block.rect.height)
+                    print(self.rect.x, self.rect.y, self.rect.width, self.rect.height)
+                    if (block.rect.x <= self.rect.x + self.rect.width <= block.rect.x + block.rect.width or\
+                           block.rect.x <= self.rect.x + 93 <= block.rect.x + block.rect.width)\
+                            and block.rect.y <= self.rect.y + self.rect.height:
                         self.jump_counter = 0
+                        self.standing = True
+                        print(1)
                     else:
-                        pass
+                        self.standing = False
                     # это делаем булевой переменной, а потом при движении проверяем ее
-        else:
-            self.rect = self.rect.move(0, 3)
+
         if self.jumping:
-            self.rect = self.rect.move(0, -5)
+            self.rect = self.rect.move(0, -10)
 
     def move(self):
-        pass
+        if not self.standing:
+            self.rect = self.rect.move(0, 5)
 
 
 class Bomb(pygame.sprite.Sprite):
@@ -163,8 +167,10 @@ class Bomb(pygame.sprite.Sprite):
             game_over()
 
     def delete(self, event):
+        global score
         if event and event.type == pygame.MOUSEBUTTONDOWN and \
                 self.rect.collidepoint(event.pos):
+            score += 2
             self.kill()
 
 
@@ -209,7 +215,7 @@ if __name__ == '__main__':
 
         if cat.jumping:
             jump_counter += 1
-        if jump_counter > 100:
+        if jump_counter > 70:
             cat.jumping = False
             jump_counter = 0
 
@@ -221,7 +227,7 @@ if __name__ == '__main__':
             last = y
             block = Blocks(WIDTH, y)
             food = Food(WIDTH, random.randint(0, HEIGHT))
-            bomb = Bomb(WIDTH, random.randint(0, HEIGHT))
+            # bomb = Bomb(WIDTH, random.randint(0, HEIGHT))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -237,5 +243,6 @@ if __name__ == '__main__':
 
         all_sprites.draw(screen)
         all_sprites.update()
+        cat.move()
         pygame.display.flip()
         clock.tick(FPS)

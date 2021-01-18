@@ -141,10 +141,9 @@ class NyanCat(pygame.sprite.Sprite):
             self.rect = self.rect.move(0, -5)
 
 
-
 class Bomb(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
-        super().__init__(food_group, all_sprites)
+        super().__init__(bomb_group, all_sprites)
         self.image = load_image('bomb.png')
         self.image = pygame.transform.scale(self.image, (30, 30))
         self.rect = self.image.get_rect()
@@ -159,6 +158,11 @@ class Bomb(pygame.sprite.Sprite):
         if pygame.sprite.spritecollideany(self, player_group):
             cat.kill()
             game_over()
+
+    def delete(self, event):
+        if event and event.type == pygame.MOUSEBUTTONDOWN and \
+                self.rect.collidepoint(event.pos):
+            self.kill()
 
 
 # class Invisible(pygame.sprite.Sprite):
@@ -185,6 +189,7 @@ if __name__ == '__main__':
     food_group = pygame.sprite.Group()
     blocks_group = pygame.sprite.Group()
     player_group = pygame.sprite.Group()
+    bomb_group = pygame.sprite.Group()
 
     pic = pygame.transform.scale(load_image("nyan cat.png"), (567, 279))
     cat = NyanCat(pic, 3, 3, 30, 100)
@@ -223,6 +228,9 @@ if __name__ == '__main__':
                     cat.jumping = True
             if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
                 cat.jump_counter += 1
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for sprite in bomb_group:
+                    sprite.delete(event)
 
         all_sprites.draw(screen)
         all_sprites.update()

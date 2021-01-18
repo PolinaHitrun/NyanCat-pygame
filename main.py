@@ -193,6 +193,7 @@ if __name__ == '__main__':
     counter = 0
     jump_counter = 0
     running = True
+    last = 0
     while running:
         counter += 1
         fon = pygame.transform.scale(load_image('fon_game.jpg'), (WIDTH, HEIGHT))
@@ -204,9 +205,13 @@ if __name__ == '__main__':
             cat.jumping = False
             jump_counter = 0
 
-        if counter > 20:
+        if counter > 30:
             counter = 0
-            block = Blocks(WIDTH, random.randint(0, HEIGHT))
+            y = random.randint(0, HEIGHT)
+            while last - 100 < y < last + 100:
+                y = random.randint(0, HEIGHT)
+            last = y
+            block = Blocks(WIDTH, y)
             food = Food(WIDTH, random.randint(0, HEIGHT))
             bomb = Bomb(WIDTH, random.randint(0, HEIGHT))
 

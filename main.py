@@ -140,6 +140,9 @@ class NyanCat(pygame.sprite.Sprite):
         if self.jumping:
             self.rect = self.rect.move(0, -5)
 
+    def move(self):
+        pass
+
 
 class Bomb(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):

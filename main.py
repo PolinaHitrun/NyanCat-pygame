@@ -128,19 +128,18 @@ class NyanCat(pygame.sprite.Sprite):
                 group.add(block)
                 if pygame.sprite.spritecollideany(self, group):
                     # если прыгает на платформу
-                    print(block.rect.x, block.rect.y, block.rect.width, block.rect.height)
-                    print(self.rect.x, self.rect.y, self.rect.width, self.rect.height)
                     if (block.rect.x <= self.rect.x + self.rect.width <= block.rect.x + block.rect.width or\
                            block.rect.x <= self.rect.x + 93 <= block.rect.x + block.rect.width)\
                             and block.rect.y <= self.rect.y + self.rect.height:
                         self.jump_counter = 0
                         self.standing = True
-                        print(1)
                     else:
                         self.standing = False
                     # это делаем булевой переменной, а потом при движении проверяем ее
 
-        if self.jumping:
+        if self.jumping and pygame.sprite.spritecollideany(self, blocks_group) and self.rect.x > 0:
+            self.rect = self.rect.move(0, -5)
+        elif self.jumping and self.rect.x > 0:
             self.rect = self.rect.move(0, -10)
 
     def move(self):
@@ -202,7 +201,8 @@ if __name__ == '__main__':
 
     pic = pygame.transform.scale(load_image("nyan cat.png"), (567, 279))
     cat = NyanCat(pic, 3, 3, 30, 100)
-    # kostyl = Invisible(30, 10)
+
+    block = Blocks(40, 300)
 
     counter = 0
     jump_counter = 0
@@ -227,7 +227,7 @@ if __name__ == '__main__':
             last = y
             block = Blocks(WIDTH, y)
             food = Food(WIDTH, random.randint(0, HEIGHT))
-            # bomb = Bomb(WIDTH, random.randint(0, HEIGHT))
+            bomb = Bomb(WIDTH, random.randint(0, HEIGHT))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

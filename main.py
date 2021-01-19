@@ -11,7 +11,32 @@ score = 0
 
 
 def game_over():
-    pass
+    global score
+    intro_text = [f"Твой счёт: {score}", "Нажми, чтобы начать заново"]
+
+    fon = pygame.transform.scale(load_image('game_over.jpg'), (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 30)
+    text_coord = 50
+    for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color(247, 211, 162))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 10
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+
+    score = 0
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                return NyanCat(pic, 3, 3, 30, 100)
+        pygame.display.flip()
+        clock.tick(FPS)
 
 
 def load_image(name, colorkey=None):
@@ -122,6 +147,8 @@ class NyanCat(pygame.sprite.Sprite):
             self.num = 0
             self.image = self.frames[self.cur_frame]
 
+        # self.rect = self.rect.move(0, 3)
+
         if pygame.sprite.spritecollideany(self, blocks_group):
             for block in blocks_group:
                 group = pygame.sprite.Group()
@@ -201,8 +228,7 @@ if __name__ == '__main__':
 
     pic = pygame.transform.scale(load_image("nyan cat.png"), (567, 279))
     cat = NyanCat(pic, 3, 3, 30, 100)
-
-    block = Blocks(40, 300)
+    # kostyl = Invisible(30, 10)
 
     counter = 0
     jump_counter = 0
@@ -243,6 +269,8 @@ if __name__ == '__main__':
 
         all_sprites.draw(screen)
         all_sprites.update()
+        if not cat.alive():
+            cat = game_over()
         cat.move()
         pygame.display.flip()
         clock.tick(FPS)

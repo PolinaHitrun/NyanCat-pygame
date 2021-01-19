@@ -35,6 +35,7 @@ def game_over():
                 terminate()
             elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                 return NyanCat(pic, 3, 3, 30, 100)
+
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -97,12 +98,12 @@ class Blocks(pygame.sprite.Sprite):
 
 
 class Food(pygame.sprite.Sprite):
-    images = ['eggs.png', 'fastfood.png', 'taco.png']
-
+    images = ['eggs.png', 'fastfood.png', 'taco.png', 'burger.png', 'chocolate.png', 'cinnamon.png', 'cookie.png',
+              'pancakes.png', 'pizza.png', 'sushi.png', 'taco2.png']
     def __init__(self, pos_x, pos_y):
         super().__init__(food_group, all_sprites)
         self.image = load_image(random.choice(Food.images))
-        self.image = pygame.transform.scale(self.image, (30, 30))
+        self.image = pygame.transform.scale(self.image, (60, 60))
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x = pos_x
@@ -178,7 +179,7 @@ class Bomb(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
         super().__init__(bomb_group, all_sprites)
         self.image = load_image('bomb.png')
-        self.image = pygame.transform.scale(self.image, (30, 30))
+        self.image = pygame.transform.scale(self.image, (60, 60))
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x = pos_x
@@ -198,16 +199,6 @@ class Bomb(pygame.sprite.Sprite):
                 self.rect.collidepoint(event.pos):
             score += 2
             self.kill()
-
-
-# class Invisible(pygame.sprite.Sprite):
-#     def __init__(self, pos_x, pos_y):
-#         super().__init__(food_group, all_sprites)
-#         self.image = pygame.Surface([95, 93])
-#         self.rect = self.image.get_rect()
-#         self.mask = pygame.mask.from_surface(self.image)
-#         self.rect.x = cat.rect.x + 95
-#         self.rect.y = cat.rect.y
 
 
 if __name__ == '__main__':
@@ -269,8 +260,9 @@ if __name__ == '__main__':
 
         all_sprites.draw(screen)
         all_sprites.update()
+        cat.move()
         if not cat.alive():
             cat = game_over()
-        cat.move()
+
         pygame.display.flip()
         clock.tick(FPS)
